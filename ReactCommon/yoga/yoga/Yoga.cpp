@@ -41,25 +41,7 @@ static int YGDefaultLog(const YGConfigRef config,
                         va_list args);
 #endif
 
-static YGConfig gYGConfigDefaults = {
-    .experimentalFeatures =
-        {
-            [YGExperimentalFeatureWebFlexBasis] = false,
-        },
-    .useWebDefaults = false,
-    .useLegacyStretchBehaviour = false,
-    .shouldDiffLayoutWithoutLegacyStretchBehaviour = false,
-    .pointScaleFactor = 1.0f,
-#ifdef ANDROID
-    .logger = &YGAndroidLog,
-#else
-    .logger = &YGDefaultLog,
-#endif
-    .cloneNodeCallback = nullptr,
-    .context = nullptr,
-};
-
-const YGValue YGValueZero = {.value = 0, .unit = YGUnitPoint};
+const YGValue YGValueZero = {0, YGUnitPoint};
 const YGValue YGValueUndefined = {YGUndefined, YGUnitUndefined};
 const YGValue YGValueAuto = {YGUndefined, YGUnitAuto};
 
@@ -246,8 +228,13 @@ WIN_EXPORT YGNodeRef YGNodeNewWithConfig(const YGConfigRef config) {
   return node;
 }
 
+YGConfigRef YGConfigGetDefault() {
+  static YGConfigRef defaultConfig = YGConfigNew();
+  return defaultConfig;
+}
+
 YGNodeRef YGNodeNew(void) {
-  return YGNodeNewWithConfig(&gYGConfigDefaults);
+  return YGNodeNewWithConfig(YGConfigGetDefault());
 }
 
 YGNodeRef YGNodeClone(YGNodeRef oldNode) {
@@ -363,19 +350,13 @@ int32_t YGConfigGetInstanceCount(void) {
   return gConfigInstanceCount;
 }
 
-// Export only for C#
-YGConfigRef YGConfigGetDefault() {
-  return &gYGConfigDefaults;
-}
-
 YGConfigRef YGConfigNew(void) {
-  const YGConfigRef config = (const YGConfigRef)malloc(sizeof(YGConfig));
-  YGAssert(config != nullptr, "Could not allocate memory for config");
-  if (config == nullptr) {
-    abort();
-  }
+  #ifdef ANDROID
+  const YGConfigRef config = new YGConfig(YGAndroidLog);
+  #else
+  const YGConfigRef config = new YGConfig(YGDefaultLog);
+  #endif
   gConfigInstanceCount++;
-  memcpy(config, &gYGConfigDefaults, sizeof(YGConfig));
   return config;
 }
 
@@ -533,79 +514,78 @@ float YGNodeStyleGetFlexShrink(const YGNodeRef node) {
     }                                                                     \
   }
 
-#define YG_NODE_STYLE_PROPERTY_SETTER_UNIT_IMPL(                               \
-    type, name, paramName, instanceName)                                       \
-  void YGNodeStyleSet##name(const YGNodeRef node, const type paramName) {      \
-    YGValue value = {                                                          \
-        .value = paramName,                                                    \
-        .unit = YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPoint, \
-    };                                                                         \
-    if ((node->getStyle().instanceName.value != value.value &&                 \
-         value.unit != YGUnitUndefined) ||                                     \
-        node->getStyle().instanceName.unit != value.unit) {                    \
-      YGStyle style = node->getStyle();                                        \
-      style.instanceName = value;                                              \
-      node->setStyle(style);                                                   \
-      node->markDirtyAndPropogate();                                           \
-    }                                                                          \
-  }                                                                            \
-                                                                               \
-  void YGNodeStyleSet##name##Percent(                                          \
-      const YGNodeRef node, const type paramName) {                            \
-    YGValue value = {                                                          \
-        .value = paramName,                                                    \
-        .unit =                                                                \
-            YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPercent,   \
-    };                                                                         \
-    if ((node->getStyle().instanceName.value != value.value &&                 \
-         value.unit != YGUnitUndefined) ||                                     \
-        node->getStyle().instanceName.unit != value.unit) {                    \
-      YGStyle style = node->getStyle();                                        \
-                                                                               \
-      style.instanceName = value;                                              \
-      node->setStyle(style);                                                   \
-      node->markDirtyAndPropogate();                                           \
-    }                                                                          \
+#define YG_NODE_STYLE_PROPERTY_SETTER_UNIT_IMPL(                          \
+    type, name, paramName, instanceName)                                  \
+  void YGNodeStyleSet##name(const YGNodeRef node, const type paramName) { \
+    YGValue value = {                                                     \
+        paramName,                                       \
+        YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPoint,    \
+    };                                                                    \
+    if ((node->getStyle().instanceName.value != value.value &&            \
+         value.unit != YGUnitUndefined) ||                                \
+        node->getStyle().instanceName.unit != value.unit) {               \
+      YGStyle style = node->getStyle();                                   \
+      style.instanceName = value;                                         \
+      node->setStyle(style);                                              \
+      node->markDirtyAndPropogate();                                      \
+    }                                                                     \
+  }                                                                       \
+                                                                          \
+  void YGNodeStyleSet##name##Percent(                                     \
+      const YGNodeRef node, const type paramName) {                       \
+    YGValue value = {                                                     \
+        paramName,                                       \
+        YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPercent,  \
+    };                                                                    \
+    if ((node->getStyle().instanceName.value != value.value &&            \
+         value.unit != YGUnitUndefined) ||                                \
+        node->getStyle().instanceName.unit != value.unit) {               \
+      YGStyle style = node->getStyle();                                   \
+                                                                          \
+      style.instanceName = value;                                         \
+      node->setStyle(style);                                              \
+      node->markDirtyAndPropogate();                                      \
+    }                                                                     \
   }
 
-#define YG_NODE_STYLE_PROPERTY_SETTER_UNIT_AUTO_IMPL(                          \
-    type, name, paramName, instanceName)                                       \
-  void YGNodeStyleSet##name(const YGNodeRef node, const type paramName) {      \
-    YGValue value = {                                                          \
-        .value = paramName,                                                    \
-        .unit = YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPoint, \
-    };                                                                         \
-    if ((node->getStyle().instanceName.value != value.value &&                 \
-         value.unit != YGUnitUndefined) ||                                     \
-        node->getStyle().instanceName.unit != value.unit) {                    \
-      YGStyle style = node->getStyle();                                        \
-      style.instanceName = value;                                              \
-      node->setStyle(style);                                                   \
-      node->markDirtyAndPropogate();                                           \
-    }                                                                          \
-  }                                                                            \
-                                                                               \
-  void YGNodeStyleSet##name##Percent(                                          \
-      const YGNodeRef node, const type paramName) {                            \
-    if (node->getStyle().instanceName.value != paramName ||                    \
-        node->getStyle().instanceName.unit != YGUnitPercent) {                 \
-      YGStyle style = node->getStyle();                                        \
-      style.instanceName.value = paramName;                                    \
-      style.instanceName.unit =                                                \
-          YGFloatIsUndefined(paramName) ? YGUnitAuto : YGUnitPercent;          \
-      node->setStyle(style);                                                   \
-      node->markDirtyAndPropogate();                                           \
-    }                                                                          \
-  }                                                                            \
-                                                                               \
-  void YGNodeStyleSet##name##Auto(const YGNodeRef node) {                      \
-    if (node->getStyle().instanceName.unit != YGUnitAuto) {                    \
-      YGStyle style = node->getStyle();                                        \
-      style.instanceName.value = YGUndefined;                                  \
-      style.instanceName.unit = YGUnitAuto;                                    \
-      node->setStyle(style);                                                   \
-      node->markDirtyAndPropogate();                                           \
-    }                                                                          \
+#define YG_NODE_STYLE_PROPERTY_SETTER_UNIT_AUTO_IMPL(                        \
+    type, name, paramName, instanceName)                                     \
+  void YGNodeStyleSet##name(const YGNodeRef node, const type paramName) {    \
+    YGValue value = {                                                        \
+        paramName,                                          \
+        YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPoint,       \
+    };                                                                       \
+    if ((node->getStyle().instanceName.value != value.value &&               \
+         value.unit != YGUnitUndefined) ||                                   \
+        node->getStyle().instanceName.unit != value.unit) {                  \
+      YGStyle style = node->getStyle();                                      \
+      style.instanceName = value;                                            \
+      node->setStyle(style);                                                 \
+      node->markDirtyAndPropogate();                                         \
+    }                                                                        \
+  }                                                                          \
+                                                                             \
+  void YGNodeStyleSet##name##Percent(                                        \
+      const YGNodeRef node, const type paramName) {                          \
+    if (node->getStyle().instanceName.value != paramName || \
+        node->getStyle().instanceName.unit != YGUnitPercent) {               \
+      YGStyle style = node->getStyle();                                      \
+      style.instanceName.value = paramName;                 \
+      style.instanceName.unit =                                              \
+          YGFloatIsUndefined(paramName) ? YGUnitAuto : YGUnitPercent;        \
+      node->setStyle(style);                                                 \
+      node->markDirtyAndPropogate();                                         \
+    }                                                                        \
+  }                                                                          \
+                                                                             \
+  void YGNodeStyleSet##name##Auto(const YGNodeRef node) {                    \
+    if (node->getStyle().instanceName.unit != YGUnitAuto) {                  \
+      YGStyle style = node->getStyle();                                      \
+      style.instanceName.value = 0;                                          \
+      style.instanceName.unit = YGUnitAuto;                                  \
+      node->setStyle(style);                                                 \
+      node->markDirtyAndPropogate();                                         \
+    }                                                                        \
   }
 
 #define YG_NODE_STYLE_PROPERTY_IMPL(type, name, paramName, instanceName)  \
@@ -643,52 +623,55 @@ float YGNodeStyleGetFlexShrink(const YGNodeRef node) {
     }                                                                        \
   }
 
-#define YG_NODE_STYLE_EDGE_PROPERTY_UNIT_IMPL(                                 \
-    type, name, paramName, instanceName)                                       \
-  void YGNodeStyleSet##name(                                                   \
-      const YGNodeRef node, const YGEdge edge, const float paramName) {        \
-    YGValue value = {                                                          \
-        .value = paramName,                                                    \
-        .unit = YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPoint, \
-    };                                                                         \
-    if ((node->getStyle().instanceName[edge].value != value.value &&           \
-         value.unit != YGUnitUndefined) ||                                     \
-        node->getStyle().instanceName[edge].unit != value.unit) {              \
-      YGStyle style = node->getStyle();                                        \
-      style.instanceName[edge] = value;                                        \
-      node->setStyle(style);                                                   \
-      node->markDirtyAndPropogate();                                           \
-    }                                                                          \
-  }                                                                            \
-                                                                               \
-  void YGNodeStyleSet##name##Percent(                                          \
-      const YGNodeRef node, const YGEdge edge, const float paramName) {        \
-    YGValue value = {                                                          \
-        .value = paramName,                                                    \
-        .unit =                                                                \
-            YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPercent,   \
-    };                                                                         \
-    if ((node->getStyle().instanceName[edge].value != value.value &&           \
-         value.unit != YGUnitUndefined) ||                                     \
-        node->getStyle().instanceName[edge].unit != value.unit) {              \
-      YGStyle style = node->getStyle();                                        \
-      style.instanceName[edge] = value;                                        \
-      node->setStyle(style);                                                   \
-      node->markDirtyAndPropogate();                                           \
-    }                                                                          \
-  }                                                                            \
-                                                                               \
-  WIN_STRUCT(type)                                                             \
-  YGNodeStyleGet##name(const YGNodeRef node, const YGEdge edge) {              \
-    return WIN_STRUCT_REF(node->getStyle().instanceName[edge]);                \
+#define YG_NODE_STYLE_EDGE_PROPERTY_UNIT_IMPL(                           \
+    type, name, paramName, instanceName)                                 \
+  void YGNodeStyleSet##name(                                             \
+      const YGNodeRef node, const YGEdge edge, const float paramName) {  \
+    YGValue value = {                                                    \
+        paramName,                                      \
+        YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPoint,   \
+    };                                                                   \
+    if ((node->getStyle().instanceName[edge].value != value.value &&     \
+         value.unit != YGUnitUndefined) ||                               \
+        node->getStyle().instanceName[edge].unit != value.unit) {        \
+      YGStyle style = node->getStyle();                                  \
+      style.instanceName[edge] = value;                                  \
+      node->setStyle(style);                                             \
+      node->markDirtyAndPropogate();                                     \
+    }                                                                    \
+  }                                                                      \
+                                                                         \
+  void YGNodeStyleSet##name##Percent(                                    \
+      const YGNodeRef node, const YGEdge edge, const float paramName) {  \
+    YGValue value = {                                                    \
+        paramName,                                      \
+        YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPercent, \
+    };                                                                   \
+    if ((node->getStyle().instanceName[edge].value != value.value &&     \
+         value.unit != YGUnitUndefined) ||                               \
+        node->getStyle().instanceName[edge].unit != value.unit) {        \
+      YGStyle style = node->getStyle();                                  \
+      style.instanceName[edge] = value;                                  \
+      node->setStyle(style);                                             \
+      node->markDirtyAndPropogate();                                     \
+    }                                                                    \
+  }                                                                      \
+                                                                         \
+  WIN_STRUCT(type)                                                       \
+  YGNodeStyleGet##name(const YGNodeRef node, const YGEdge edge) {        \
+    YGValue value = node->getStyle().instanceName[edge];                 \
+    if (value.unit == YGUnitUndefined || value.unit == YGUnitAuto) {     \
+      value.value = YGUndefined;                                         \
+    }                                                                    \
+    return WIN_STRUCT_REF(value);                                        \
   }
 
-#define YG_NODE_STYLE_EDGE_PROPERTY_IMPL(type, name, paramName, instanceName)  \
+  #define YG_NODE_STYLE_EDGE_PROPERTY_IMPL(type, name, paramName, instanceName)  \
   void YGNodeStyleSet##name(                                                   \
       const YGNodeRef node, const YGEdge edge, const float paramName) {        \
     YGValue value = {                                                          \
-        .value = paramName,                                                    \
-        .unit = YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPoint, \
+        paramName,                                                    \
+        YGFloatIsUndefined(paramName) ? YGUnitUndefined : YGUnitPoint, \
     };                                                                         \
     if ((node->getStyle().instanceName[edge].value != value.value &&           \
          value.unit != YGUnitUndefined) ||                                     \
@@ -3734,7 +3717,7 @@ static void YGVLog(const YGConfigRef config,
                    YGLogLevel level,
                    const char *format,
                    va_list args) {
-  const YGConfigRef logConfig = config != nullptr ? config : &gYGConfigDefaults;
+  const YGConfigRef logConfig = config != nullptr ? config : YGConfigGetDefault();
   logConfig->logger(logConfig, node, level, format, args);
 
   if (level == YGLogLevelFatal) {
