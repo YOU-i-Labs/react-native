@@ -1,12 +1,12 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
 
 #pragma once
+#include "port/Port.h"
 
 #include <condition_variable>
 #include <memory>
 
 #include <cxxreact/NativeToJsBridge.h>
-#include <jschelpers/Value.h>
 
 #ifndef RN_EXPORT
 #define RN_EXPORT __attribute__((visibility("default")))

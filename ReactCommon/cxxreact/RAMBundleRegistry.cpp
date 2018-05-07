@@ -4,8 +4,6 @@
 
 #include <folly/Memory.h>
 
-#include <libgen.h>
-
 namespace facebook {
 namespace react {
 

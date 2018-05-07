@@ -7,7 +7,6 @@
 #include <map>
 #include <vector>
 
-#include <cxxreact/JSCExecutor.h>
 #include <cxxreact/JSExecutor.h>
 
 namespace folly {

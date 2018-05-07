@@ -11,6 +11,7 @@
 #include "SystraceSection.h"
 #include "MethodCall.h"
 #include "MessageQueueThread.h"
+#include "ModuleRegistry.h"
 #include "RAMBundleRegistry.h"
 
 #ifdef WITH_FBSYSTRACE
