@@ -4,6 +4,7 @@
 // LICENSE file in the root directory of this source tree.
 
 #pragma once
+#include "port/Port.h"
 
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -126,7 +127,7 @@ public:
       const static auto ps = getpagesize();
       auto d  = lldiv(offset, ps);
 
-      m_mapOff  = d.quot;
+      m_mapOff  = static_cast<off_t>(d.quot);
       m_pageOff = d.rem;
       m_size    = size + m_pageOff;
     } else {
