@@ -154,6 +154,12 @@ find_package(double-conversion CONFIG REQUIRED)
 hunter_add_package(glog)
 find_package(glog CONFIG REQUIRED)
 
+if (NOT APPLE)
+    # matches the target_link_libraries below
+    hunter_add_package(WebKit)
+    find_package(WebKit CONFIG REQUIRED)
+endif()
+
 include(GNUInstallDirs)
 set(_ReactCommon_CMake_EXPORT_NAME "ReactCommon")
 set(_ReactCommon_CMake_BINDIR ${CMAKE_INSTALL_BINDIR})
@@ -175,6 +181,11 @@ target_link_libraries(ReactCommon PUBLIC
     double-conversion::double-conversion
     glog::glog
 )
+
+if (NOT APPLE)
+    # matches the hunter_add_package above
+    target_link_libraries(ReactCommon PUBLIC WebKit::JavaScriptCore WebKit::WTF)
+endif()
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
