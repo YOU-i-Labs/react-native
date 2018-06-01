@@ -140,10 +140,25 @@ set(REACT_COMMON_HEADERS
     ${REACT_COMMON_CXXREACT_HEADERS}
 )
 
+set(MMAN_WIN32_SOURCE
+    sys/mman.c
+)
+
+set(MMAN_WIN32_HEADERS
+    sys/mman.h
+)
+
 if(USE_JSC)
     list(APPEND REACT_COMMON_SOURCE ${REACT_COMMON_JSC_HELPERS_SOURCE} ${REACT_COMMON_JSC_CXXREACT_SOURCE})
     list(APPEND REACT_COMMON_HEADERS ${REACT_COMMON_JSC_HELPERS_HEADERS} ${REACT_COMMON_JSC_HEADERS})
 endif(USE_JSC)
+
+if(USE_MMAN_WIN32)
+    list(APPEND REACT_COMMON_SOURCE ${MMAN_WIN32_SOURCE})
+    list(APPEND REACT_COMMON_HEADERS ${MMAN_WIN32_HEADERS})
+else()
+    set(_EXCLUDE_MMAN_WIN32_PATTERN "*mman.*")
+endif()
 
 hunter_add_package(folly)
 find_package(folly CONFIG REQUIRED)
@@ -154,7 +169,7 @@ find_package(double-conversion CONFIG REQUIRED)
 hunter_add_package(glog)
 find_package(glog CONFIG REQUIRED)
 
-if (NOT APPLE)
+if (USE_JSC AND NOT APPLE)
     # matches the target_link_libraries below
     hunter_add_package(WebKit)
     find_package(WebKit CONFIG REQUIRED)
@@ -182,9 +197,21 @@ target_link_libraries(ReactCommon PUBLIC
     glog::glog
 )
 
-if (NOT APPLE)
+if (USE_JSC AND NOT APPLE)
     # matches the hunter_add_package above
     target_link_libraries(ReactCommon PUBLIC WebKit::JavaScriptCore WebKit::WTF)
+endif() 
+
+if (CMAKE_CXX_STANDARD GREATER_EQUAL 17)
+    target_compile_definitions(ReactCommon
+        PRIVATE _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+    )
+endif()
+
+if (MSVC)
+    target_compile_definitions(ReactCommon
+        PRIVATE _CRT_SECURE_NO_WARNINGS
+    )
 endif()
 
 include(CMakePackageConfigHelpers)
@@ -207,7 +234,9 @@ install(FILES
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
     DESTINATION ${_ReactCommon_CMake_INCLUDE_DIR}
-    FILES_MATCHING PATTERN "*.h*"
+    FILES_MATCHING 
+    PATTERN "*.h*"
+    PATTERN "${_EXCLUDE_MMAN_WIN32_PATTERN}" EXCLUDE
 )
 
 install(TARGETS ReactCommon EXPORT ${_ReactCommon_CMake_EXPORT_NAME}

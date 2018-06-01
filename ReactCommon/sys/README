@@ -1,0 +1,1 @@
+This has been copied from https://github.com/witwall/mman-win32 as mman.h is not available on Windows but is used by ReactCommon.

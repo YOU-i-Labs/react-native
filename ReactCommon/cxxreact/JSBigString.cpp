@@ -8,6 +8,10 @@
 #include <folly/Memory.h>
 #include <folly/ScopeGuard.h>
 
+#if defined(_MSC_VER)
+#define open _open
+#endif
+
 namespace facebook {
 namespace react {
 
