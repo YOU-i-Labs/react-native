@@ -141,11 +141,11 @@ set(REACT_COMMON_HEADERS
 )
 
 set(MMAN_WIN32_SOURCE
-    sys/mman.c
+    port/sys/mman.c
 )
 
 set(MMAN_WIN32_HEADERS
-    sys/mman.h
+    port/sys/mman.h
 )
 
 if(USE_JSC)
@@ -156,8 +156,6 @@ endif(USE_JSC)
 if(USE_MMAN_WIN32)
     list(APPEND REACT_COMMON_SOURCE ${MMAN_WIN32_SOURCE})
     list(APPEND REACT_COMMON_HEADERS ${MMAN_WIN32_HEADERS})
-else()
-    set(_EXCLUDE_MMAN_WIN32_PATTERN "*mman.*")
 endif()
 
 hunter_add_package(folly)
@@ -190,6 +188,13 @@ target_include_directories(ReactCommon PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/yoga>
 )
+
+if (USE_MMAN_WIN32)
+    target_include_directories(ReactCommon PUBLIC
+        $<INSTALL_INTERFACE:${_ReactCommon_CMake_INCLUDE_DIR}/port>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/port>
+    )
+endif()
 
 target_link_libraries(ReactCommon PUBLIC
     Folly::folly
@@ -236,7 +241,6 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
     DESTINATION ${_ReactCommon_CMake_INCLUDE_DIR}
     FILES_MATCHING 
     PATTERN "*.h*"
-    PATTERN "${_EXCLUDE_MMAN_WIN32_PATTERN}" EXCLUDE
 )
 
 install(TARGETS ReactCommon EXPORT ${_ReactCommon_CMake_EXPORT_NAME}
