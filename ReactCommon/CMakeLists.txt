@@ -199,7 +199,7 @@ target_link_libraries(ReactCommon PUBLIC
 
 if (USE_JSC AND NOT APPLE)
     # matches the hunter_add_package above
-    target_link_libraries(ReactCommon PUBLIC WebKit::JavaScriptCore WebKit::WTF)
+    target_link_libraries(ReactCommon PUBLIC WebKit::JavaScriptCore)
 endif() 
 
 if (CMAKE_CXX_STANDARD GREATER_EQUAL 17)
