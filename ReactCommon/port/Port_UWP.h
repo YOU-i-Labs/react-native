@@ -10,7 +10,9 @@
 #define __attribute__(x)
 #define UWP
 #define dup _dup
-#define close _close
+
+#undef YI_CLOSE_FILE_FUNCTION
+#define YI_CLOSE_FILE_FUNCTION _close
 
 inline int getpagesize (void)
 {

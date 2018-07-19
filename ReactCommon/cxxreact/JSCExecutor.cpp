@@ -249,7 +249,7 @@ namespace facebook {
 #ifdef WITH_FB_DBG_ATTACH_BEFORE_EXEC
       auto connect_socket = [](int socket_desc, std::string address, int port) {
         if (socket_desc < 0) {
-          ::close(socket_desc);
+          ::YI_CLOSE_FILE_FUNCTION(socket_desc);
           return false;
         }
 
@@ -258,13 +258,13 @@ namespace facebook {
         tv.tv_usec = 0;
         auto sock_opt_rcv_resp = setsockopt(socket_desc, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(struct timeval));
         if (sock_opt_rcv_resp < 0) {
-          ::close(socket_desc);
+          ::YI_CLOSE_FILE_FUNCTION(socket_desc);
           return false;
         }
 
         auto sock_opt_snd_resp = setsockopt(socket_desc, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(struct timeval));
         if (sock_opt_snd_resp < 0) {
-          ::close(socket_desc);
+          ::YI_CLOSE_FILE_FUNCTION(socket_desc);
           return false;
         }
 
@@ -274,7 +274,7 @@ namespace facebook {
         server.sin_port = htons(port);
         auto connect_resp = ::connect(socket_desc, (struct sockaddr *)&server, sizeof(server));
         if (connect_resp < 0) {
-          ::close(socket_desc);
+          ::YI_CLOSE_FILE_FUNCTION(socket_desc);
           return false;
         }
 
@@ -307,7 +307,7 @@ namespace facebook {
         " HTTP/1.1\r\n\r\n");
       auto send_resp = ::send(socket_desc, msg.c_str(), msg.length(), 0);
       if (send_resp < 0) {
-        ::close(socket_desc);
+        ::YI_CLOSE_FILE_FUNCTION(socket_desc);
         return false;
       }
 
@@ -316,18 +316,18 @@ namespace facebook {
       auto recv_resp = ::recv(socket_desc, server_reply,
                               sizeof(server_reply) - 1, 0);
       if (recv_resp < 0) {
-        ::close(socket_desc);
+        ::YI_CLOSE_FILE_FUNCTION(socket_desc);
         return false;
       }
 
       std::string response(server_reply);
       if (response.size() < 25) {
-        ::close(socket_desc);
+        ::YI_CLOSE_FILE_FUNCTION(socket_desc);
         return false;
       }
       auto responseCandidate = response.substr(response.size() - 25);
       auto found = responseCandidate.find("{\"autoattach\":true}") != std::string::npos;
-      ::close(socket_desc);
+      ::YI_CLOSE_FILE_FUNCTION(socket_desc);
       return found;
 #else //!WITH_FB_DBG_ATTACH_BEFORE_EXEC
       return false;

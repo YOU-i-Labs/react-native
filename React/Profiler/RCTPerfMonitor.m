@@ -375,7 +375,7 @@ RCT_EXPORT_MODULE()
   }
 
   dup2(_pipe[1], STDERR_FILENO);
-  close(_pipe[1]);
+  YI_CLOSE_FILE_FUNCTION(_pipe[1]);
 
   __weak __typeof__(self) weakSelf = self;
   _queue = dispatch_queue_create("com.facebook.react.RCTPerfMonitor", DISPATCH_QUEUE_SERIAL);
