@@ -3,6 +3,10 @@
 #pragma once
 #include "port/Port.h"
 
+#if defined(YI_PORT_FILE_REQUIRED)
+#include <YiPort.h>
+#endif
+
 #include <fcntl.h>
 #include <sys/mman.h>
 
