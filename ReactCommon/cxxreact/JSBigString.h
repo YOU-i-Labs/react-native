@@ -3,9 +3,6 @@
 #pragma once
 #include "port/Port.h"
 
-#if defined(YI_PORT_FILE_REQUIRED)
-#include <YiPort.h>
-#endif
 
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -117,8 +114,13 @@ public:
   : m_fd   {-1}
   , m_data {nullptr}
   {
+#if defined(__ORBIS__)
+    folly::checkUnixError(-1,
+      "Can not duplicate file descriptor on PS4");
+#else
     folly::checkUnixError(m_fd = dup(fd),
       "Could not duplicate file descriptor");
+#endif
 
     // Offsets given to mmap must be page aligend. We abstract away that
     // restriction by sending a page aligned offset to mmap, and keeping track
