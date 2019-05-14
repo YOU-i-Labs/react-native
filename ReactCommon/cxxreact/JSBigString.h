@@ -6,6 +6,7 @@
 #pragma once
 #include "port/Port.h"
 
+
 #include <fcntl.h>
 #include <sys/mman.h>
 
@@ -116,8 +117,13 @@ public:
   : m_fd   {-1}
   , m_data {nullptr}
   {
+#if defined(__ORBIS__)
+    folly::checkUnixError(-1,
+      "Can not duplicate file descriptor on PS4");
+#else
     folly::checkUnixError(m_fd = dup(fd),
       "Could not duplicate file descriptor");
+#endif
 
     // Offsets given to mmap must be page aligend. We abstract away that
     // restriction by sending a page aligned offset to mmap, and keeping track
@@ -141,7 +147,7 @@ public:
     if (m_data) {
       munmap((void *)m_data, m_size);
     }
-    close(m_fd);
+    YI_CLOSE_FILE_FUNCTION(m_fd);
   }
 
   bool isAscii() const override {
