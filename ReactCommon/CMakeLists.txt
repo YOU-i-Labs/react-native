@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 add_library(ReactCommon STATIC)
+add_library(ReactCommonJSC STATIC)
 
 set(REACT_COMMON_YOGA_SOURCE
     yoga/yoga/Utils.cpp
@@ -102,8 +103,9 @@ target_sources(ReactCommon
 )
 
 if(USE_JSC)
-    target_sources(ReactCommon PRIVATE ${REACT_COMMON_JSC_CXXREACT_SOURCE})
-    target_include_directories(ReactCommon PRIVATE jsiexecutor)
+    target_sources(ReactCommonJSC PRIVATE ${REACT_COMMON_JSC_CXXREACT_SOURCE})
+    target_include_directories(ReactCommonJSC PRIVATE jsiexecutor)
+    target_link_libraries(ReactCommonJSC PUBLIC ReactCommon)
 endif()
 
 if(USE_MMAN_WIN32)
@@ -123,6 +125,9 @@ if (USE_JSC AND NOT APPLE)
     # matches the target_link_libraries below
     hunter_add_package(WebKit)
     find_package(WebKit CONFIG REQUIRED)
+
+    # matches the hunter_add_package above
+    target_link_libraries(ReactCommonJSC PUBLIC WebKit::JavaScriptCore)
 endif()
 
 include(GNUInstallDirs)
@@ -152,15 +157,14 @@ target_link_libraries(ReactCommon PUBLIC
     glog::glog
 )
 
-if (USE_JSC AND NOT APPLE)
-    # matches the hunter_add_package above
-    target_link_libraries(ReactCommon PUBLIC WebKit::JavaScriptCore)
-endif() 
-
 if (CMAKE_CXX_STANDARD GREATER_EQUAL 17)
     target_compile_definitions(ReactCommon
         PRIVATE _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
     )
+    target_compile_definitions(ReactCommonJSC
+        PRIVATE _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+    )
+
 endif()
 
 if (MSVC)
@@ -170,6 +174,7 @@ if (MSVC)
 endif()
 
 include(CMakePackageConfigHelpers)
+
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/generated/${_ReactCommon_CMake_EXPORT_NAME}Config.cmake
     INSTALL_DESTINATION ${_ReactCommon_CMake_INSTALLDIR}
@@ -203,3 +208,37 @@ install(EXPORT ${_ReactCommon_CMake_EXPORT_NAME} NAMESPACE ${_ReactNative_EXPORT
     DESTINATION ${_ReactCommon_CMake_INSTALLDIR}
     FILE "${_ReactCommon_CMake_EXPORT_NAME}Targets.cmake"
 )
+
+##################################
+##################################
+
+set(_ReactCommon_CMake_EXPORT_NAME "ReactCommonJSC")
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/${_ReactCommon_CMake_EXPORT_NAME}Config.cmake
+    INSTALL_DESTINATION ${_ReactCommon_CMake_INSTALLDIR}
+    NO_SET_AND_CHECK_MACRO
+)
+
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/generated/${_ReactCommon_CMake_EXPORT_NAME}ConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY ExactVersion
+)
+
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/${_ReactCommon_CMake_EXPORT_NAME}Config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/${_ReactCommon_CMake_EXPORT_NAME}ConfigVersion.cmake
+    DESTINATION ${_ReactCommon_CMake_INSTALLDIR}
+)
+
+install(TARGETS ReactCommonJSC EXPORT ${_ReactCommon_CMake_EXPORT_NAME}
+    ARCHIVE DESTINATION ${_ReactCommon_CMake_LIBDIR}
+    LIBRARY DESTINATION ${_ReactCommon_CMake_LIBDIR}
+    INCLUDES DESTINATION ${_ReactCommon_CMake_INCLUDEDIR}
+)
+
+install(EXPORT ${_ReactCommon_CMake_EXPORT_NAME} NAMESPACE ${_ReactNative_EXPORTS_NAMESPACE}
+    DESTINATION ${_ReactCommon_CMake_INSTALLDIR}
+    FILE "${_ReactCommon_CMake_EXPORT_NAME}Targets.cmake"
+)
+
+
