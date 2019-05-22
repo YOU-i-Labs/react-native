@@ -200,12 +200,17 @@ class JSCRuntime : public jsi::Runtime {
 #endif
 };
 
+#if __linux__
+#define JSC_LIKELY(EXPR) (EXPR)
+#define JSC_UNLIKELY(EXPR) (EXPR)
+#else
 #if __has_builtin(__builtin_expect)
 #define JSC_LIKELY(EXPR) __builtin_expect((bool)(EXPR), true)
 #define JSC_UNLIKELY(EXPR) __builtin_expect((bool)(EXPR), false)
 #else
 #define JSC_LIKELY(EXPR) (EXPR)
 #define JSC_UNLIKELY(EXPR) (EXPR)
+#endif
 #endif
 
 #define JSC_ASSERT(x)          \
