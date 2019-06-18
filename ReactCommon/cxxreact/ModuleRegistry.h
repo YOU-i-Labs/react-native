@@ -42,6 +42,9 @@ class RN_EXPORT ModuleRegistry {
   ModuleRegistry(std::vector<std::unique_ptr<NativeModule>> modules, ModuleNotFoundCallback callback = nullptr);
   void registerModules(std::vector<std::unique_ptr<NativeModule>> modules);
 
+  ModuleRegistry(const ModuleRegistry&) = delete;
+  ModuleRegistry &operator=(const ModuleRegistry&) = delete;
+
   std::vector<std::string> moduleNames();
 
   folly::Optional<ModuleConfig> getConfig(const std::string& name);
