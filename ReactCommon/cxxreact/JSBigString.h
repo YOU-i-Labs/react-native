@@ -12,6 +12,11 @@
 
 #include <folly/Exception.h>
 
+#if defined(UWP)
+#define RN_EXPORT
+#elif defined(_WIN32)
+#define RN_EXPORT __declspec(dllexport)
+#endif
 #ifndef RN_EXPORT
 #define RN_EXPORT __attribute__((visibility("default")))
 #endif
@@ -26,7 +31,7 @@ namespace react {
 // large string needs to be curried into a std::function<>, which must
 // by CopyConstructible.
 
-class JSBigString {
+class RN_EXPORT JSBigString {
 public:
   JSBigString() = default;
 
@@ -47,7 +52,7 @@ public:
 
 // Concrete JSBigString implementation which holds a std::string
 // instance.
-class JSBigStdString : public JSBigString {
+class RN_EXPORT JSBigStdString : public JSBigString {
 public:
   JSBigStdString(std::string str, bool isAscii=false)
   : m_isAscii(isAscii)
@@ -74,7 +79,7 @@ private:
 // buffer, and provides an accessor for writing to it.  This can be
 // used to construct a JSBigString in place, such as by reading from a
 // file.
-class JSBigBufferString : public JSBigString {
+class RN_EXPORT JSBigBufferString : public JSBigString {
 public:
   JSBigBufferString(size_t size)
   : m_data(new char[size + 1])

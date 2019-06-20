@@ -33,6 +33,11 @@ using LogTaggedMarker = std::function<void(const ReactMarkerId, const char* tag)
 typedef void(*LogTaggedMarker)(const ReactMarkerId, const char* tag);
 #endif
 
+#if defined(UWP)
+#define RN_EXPORT
+#elif defined(_WIN32)
+#define RN_EXPORT __declspec(dllexport)
+#endif
 #ifndef RN_EXPORT
 #define RN_EXPORT __attribute__((visibility("default")))
 #endif
