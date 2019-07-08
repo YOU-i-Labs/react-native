@@ -10,4 +10,8 @@
 #endif
 #endif
 
+#ifndef RN_EXPORT
+#define RN_EXPORT
+#endif
+
 #endif

@@ -27,8 +27,6 @@ inline int getpagesize (void)
   #define RN_EXPORT __declspec(dllexport)
 #elif defined(RN_IMPORT_DLL)
   #define RN_EXPORT __declspec(dllimport)
-#else
-  #define RN_EXPORT
 #endif // RN_EXPORT_DLL
 
 #endif // RN_EXPORT
