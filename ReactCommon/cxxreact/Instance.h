@@ -11,9 +11,7 @@
 
 #include <cxxreact/NativeToJsBridge.h>
 
-#ifndef RN_EXPORT
-#define RN_EXPORT __attribute__((visibility("default")))
-#endif
+#include "port/Port.h"
 
 namespace folly {
 struct dynamic;

@@ -8,12 +8,11 @@
 #include <fstream>
 #include <memory>
 
+#include "port/Port.h"
+
 #include <cxxreact/JSBigString.h>
 #include <cxxreact/JSModulesUnbundle.h>
 
-#ifndef RN_EXPORT
-#define RN_EXPORT __attribute__((visibility("default")))
-#endif
 
 namespace facebook {
 namespace react {

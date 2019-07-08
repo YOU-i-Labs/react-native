@@ -12,10 +12,6 @@
 
 #include <folly/Exception.h>
 
-#ifndef RN_EXPORT
-#define RN_EXPORT __attribute__((visibility("default")))
-#endif
-
 namespace facebook {
 namespace react {
 
@@ -110,7 +106,7 @@ private:
 };
 
 // JSBigString interface implemented by a file-backed mmap region.
-class RN_EXPORT JSBigFileString : public JSBigString {
+class JSBigFileString : public JSBigString {
 public:
 
   JSBigFileString(int fd, size_t size, off_t offset = 0)

@@ -9,9 +9,6 @@
 #include <cxxreact/CxxModule.h>
 #include <cxxreact/NativeModule.h>
 
-#ifndef RN_EXPORT
-#define RN_EXPORT __attribute__((visibility("default")))
-#endif
 
 namespace facebook {
 namespace react {

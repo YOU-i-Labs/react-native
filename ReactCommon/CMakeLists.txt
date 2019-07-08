@@ -165,11 +165,24 @@ if (MSVC)
         _CRT_SECURE_NO_WARNINGS
     )
 
+    if (BUILD_SHARED_LIBS)
+        target_compile_definitions(ReactCommon PRIVATE
+            PUBLIC RN_IMPORT_DLL
+            PRIVATE RN_EXPORT_DLL
+        )
+    endif()
+
     if(USE_JSC)
         target_compile_definitions(ReactCommonJSC PRIVATE 
             _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
             _CRT_SECURE_NO_WARNINGS
         )
+        if (BUILD_SHARED_LIBS)
+            target_compile_definitions(ReactCommonJSC PRIVATE
+                PUBLIC RN_IMPORT_DLL
+                PRIVATE RN_EXPORT_DLL
+            )
+        endif()
     endif()
 endif()
 
