@@ -142,6 +142,10 @@ class Runtime {
   /// \return the global object
   virtual Object global() = 0;
 
+  /// Returns the context. Only use if you know what you are doing.
+  /// For JSCRuntime returns a JSGlobalContextRef
+  virtual void * internalContext() = 0;
+
   /// \return a short printable description of the instance.  This
   /// should only be used by logging, debugging, and other
   /// developer-facing callers.
