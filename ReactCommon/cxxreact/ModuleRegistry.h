@@ -4,6 +4,7 @@
 // LICENSE file in the root directory of this source tree.
 
 #pragma once
+#include "port/Port.h"
 
 #include <memory>
 #include <unordered_set>
@@ -12,10 +13,6 @@
 #include <cxxreact/JSExecutor.h>
 #include <folly/Optional.h>
 #include <folly/dynamic.h>
-
-#ifndef RN_EXPORT
-#define RN_EXPORT __attribute__((visibility("default")))
-#endif
 
 namespace facebook {
 namespace react {
