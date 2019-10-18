@@ -14,6 +14,10 @@
 #include <folly/portability/SysMman.h>
 #include <folly/ScopeGuard.h>
 
+#if defined(_MSC_VER)
+#define open _open
+#endif
+
 namespace facebook {
 namespace react {
 
@@ -140,7 +144,7 @@ int JSBigFileString::fd() const {
 std::unique_ptr<const JSBigFileString> JSBigFileString::fromPath(const std::string& sourceURL) {
   int fd = ::open(sourceURL.c_str(), O_RDONLY);
   folly::checkUnixError(fd, "Could not open file", sourceURL);
-  SCOPE_EXIT { CHECK(::close(fd) == 0); };
+  SCOPE_EXIT { CHECK(::YI_CLOSE_FILE_FUNCTION(fd) == 0); };
 
   struct stat fileInfo;
   folly::checkUnixError(::fstat(fd, &fileInfo), "fstat on bundle failed.");
