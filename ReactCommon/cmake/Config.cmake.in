@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+
+find_package(folly CONFIG REQUIRED)
+find_package(double-conversion CONFIG REQUIRED)
+find_package(glog CONFIG REQUIRED)
+
+if (USE_JSC AND NOT APPLE)
+	find_package(WebKit CONFIG REQUIRED)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/@_ReactCommon_CMake_EXPORT_NAME@Targets.cmake")
+check_required_components("@_ReactCommon_CMake_EXPORT_NAME@")
