@@ -2,6 +2,7 @@
 
 // This source code is licensed under the MIT license found in the
 // LICENSE file in the root directory of this source tree.
+#include "port/Port.h"
 
 #include <algorithm>
 #include <chrono>
@@ -16,7 +17,7 @@
 
 // iOS doesn't support 'thread_local'. If we reimplement this to use pthread_setspecific
 // we can get rid of this
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(UWP)
 #define MICRO_PROFILER_STUB_IMPLEMENTATION 1
 #elif !defined(MICRO_PROFILER_STUB_IMPLEMENTATION)
 #define MICRO_PROFILER_STUB_IMPLEMENTATION 0
