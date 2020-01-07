@@ -148,6 +148,10 @@ class Runtime {
  public:
   virtual ~Runtime();
 
+  /// Returns the context. Only use if you know what you are doing.
+  /// For JSCRuntime returns a JSGlobalContextRef
+  virtual void *internalContext() = 0;
+
   /// Evaluates the given JavaScript \c buffer.  \c sourceURL is used
   /// to annotate the stack trace if there is an exception.  The
   /// contents may be utf8-encoded JS source code, or binary bytcode
