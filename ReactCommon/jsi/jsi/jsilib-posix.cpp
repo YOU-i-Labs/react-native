@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdarg.h>
 #include <cerrno>
 #include <cstdarg>
 #include <stdexcept>

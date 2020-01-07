@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#ifndef __unused
+#define __unused __attribute__((unused))
+#endif
+
 #include "SampleCxxModule.h"
 #include <cxxreact/JsArgumentHelpers.h>
 
