@@ -110,6 +110,11 @@ target_sources(ReactCommon
     ${REACT_COMMON_CXXREACT_SOURCE}
 )
 
+target_compile_definitions(ReactCommon
+    PUBLIC
+        REACTCOMMON_VERSION=60
+)
+
 target_include_directories(ReactCommon PRIVATE jsi)
 target_include_directories(ReactCommonJSC PRIVATE jsi)
 
