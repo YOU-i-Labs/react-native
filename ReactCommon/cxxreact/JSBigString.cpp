@@ -14,6 +14,8 @@
 #include <folly/portability/SysMman.h>
 #include <folly/ScopeGuard.h>
 
+#include "port/Port.h"
+
 #if defined(_MSC_VER)
 #define open _open
 #endif
