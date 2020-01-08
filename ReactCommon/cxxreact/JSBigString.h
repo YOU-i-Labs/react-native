@@ -4,6 +4,8 @@
 // LICENSE file in the root directory of this source tree.
 
 #pragma once
+#include "port/Port.h"
+
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -113,7 +115,7 @@ private:
 };
 
 // JSBigString interface implemented by a file-backed mmap region.
-class RN_EXPORT JSBigFileString : public JSBigString {
+class JSBigFileString : public JSBigString {
 public:
 
   JSBigFileString(int fd, size_t size, off_t offset = 0);

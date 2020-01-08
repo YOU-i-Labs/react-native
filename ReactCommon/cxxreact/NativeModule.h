@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "port/Port.h"
+
 #include <folly/Optional.h>
 #include <folly/dynamic.h>
 
@@ -26,7 +28,7 @@ struct MethodDescriptor {
 
   using MethodCallResult = folly::Optional<folly::dynamic>;
 
-class NativeModule {
+class RN_EXPORT NativeModule {
  public:
   virtual ~NativeModule() {}
   virtual std::string getName() = 0;
