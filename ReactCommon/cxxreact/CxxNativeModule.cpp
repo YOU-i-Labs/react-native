@@ -72,7 +72,15 @@ folly::dynamic CxxNativeModule::getConstants() {
   }
 
   folly::dynamic constants = folly::dynamic::object();
-  for (auto& pair : module_->getConstants()) {
+  auto currentModuleConstants = module_->getConstants();
+
+  // This constant size is a work-around for gcc 4.9.x on ARM with gnu++14,
+  // where the end iterator test always fails and keeps going through past the
+  // std::map bound until it crashes.
+  size_t constantSize = 0;
+  for(auto &pair : currentModuleConstants)
+  {
+    if (constantSize++ == currentModuleConstants.size()) { break; }
     constants.insert(std::move(pair.first), std::move(pair.second));
   }
   return constants;
