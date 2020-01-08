@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "port/Port.h"
+
 #ifdef __APPLE__
 #include <functional>
 #endif
@@ -34,10 +36,6 @@ using LogTaggedMarker =
     std::function<void(const ReactMarkerId, const char *tag)>;
 #else
 typedef void (*LogTaggedMarker)(const ReactMarkerId, const char *tag);
-#endif
-
-#ifndef RN_EXPORT
-#define RN_EXPORT __attribute__((visibility("default")))
 #endif
 
 extern RN_EXPORT LogTaggedMarker logTaggedMarker;

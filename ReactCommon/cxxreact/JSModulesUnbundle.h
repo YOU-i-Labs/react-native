@@ -11,12 +11,14 @@
 #include <stdexcept>
 #include <string>
 
+#include "port/Port.h"
+
 #include <folly/Conv.h>
 
 namespace facebook {
 namespace react {
 
-class JSModulesUnbundle {
+class RN_EXPORT JSModulesUnbundle {
   /**
    * Represents the set of JavaScript modules that the application consists of.
    * The source code of each module can be retrieved by module ID.
