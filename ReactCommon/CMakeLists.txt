@@ -52,18 +52,18 @@ set(REACT_COMMON_JSC_CXXREACT_SOURCE
     jsi/jsi/jsi-inl.h
     jsi/jsi/jsi.cpp
     jsi/jsi/jsi.h
-    jsi/jsi/JSIDynamic.cpp
-    jsi/jsi/JSIDynamic.h
     jsi/jsi/jsilib-posix.cpp
     jsi/jsi/jsilib.h
     jsi/jsi/threadsafe.h
+)
+
+set(REACT_COMMON_CXXREACT_SOURCE
+    jsi/jsi/JSIDynamic.cpp
+    jsi/jsi/JSIDynamic.h
     jsiexecutor/jsireact/JSIExecutor.cpp
     jsiexecutor/jsireact/JSIExecutor.h
     jsiexecutor/jsireact/JSINativeModules.cpp
     jsiexecutor/jsireact/JSINativeModules.h
-)
-
-set(REACT_COMMON_CXXREACT_SOURCE
     cxxreact/CxxNativeModule.cpp
     cxxreact/CxxNativeModule.h
     cxxreact/Instance.cpp
@@ -115,6 +115,7 @@ target_compile_definitions(ReactCommon
 )
 
 target_include_directories(ReactCommon PRIVATE jsi)
+target_include_directories(ReactCommon PRIVATE jsiexecutor)
 
 if(USE_JSC)
     # USE_JSC now means that JSC is available, not necessarily that ReactCommon must be used with JSC. So we build the library for any platform that can have WebKit built.
