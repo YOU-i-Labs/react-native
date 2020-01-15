@@ -7,8 +7,11 @@
 #pragma once
 
 #ifdef __cplusplus
-#define YG_EXTERN_C_BEGIN extern "C" {
-#define YG_EXTERN_C_END }
+// #define YG_EXTERN_C_BEGIN extern "C" {
+// #define YG_EXTERN_C_END }
+#define YG_EXTERN_C_BEGIN
+#define YG_EXTERN_C_END
+
 #else
 #define YG_EXTERN_C_BEGIN
 #define YG_EXTERN_C_END
