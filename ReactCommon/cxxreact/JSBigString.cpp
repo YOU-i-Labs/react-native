@@ -29,6 +29,10 @@ namespace react {
 
 JSBigFileString::JSBigFileString(int fd, size_t size, off_t offset /*= 0*/)
     : m_fd{-1}, m_data{nullptr} {
+
+#if defined(__ORBIS__)
+  // JSBigString not supported on these platforms
+#else
   folly::checkUnixError(m_fd = dup(fd), "Could not duplicate file descriptor");
 
   // Offsets given to mmap must be page aligned. We abstract away that
@@ -47,6 +51,7 @@ JSBigFileString::JSBigFileString(int fd, size_t size, off_t offset /*= 0*/)
     m_pageOff = 0;
     m_size = size;
   }
+#endif
 }
 
 JSBigFileString::~JSBigFileString() {
