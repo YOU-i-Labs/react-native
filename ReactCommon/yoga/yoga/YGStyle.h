@@ -16,6 +16,10 @@
 #include "Yoga-internal.h"
 #include "Yoga.h"
 
+#if defined(_MSC_VER)
+#define ENUM_BITFIELDS_NOT_SUPPORTED
+#endif
+
 #if !defined(ENUM_BITFIELDS_NOT_SUPPORTED)
 #define BITFIELD_ENUM_SIZED(num) : num
 #else
