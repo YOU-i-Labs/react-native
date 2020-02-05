@@ -20,9 +20,7 @@ static const uint32_t __nan = 0x7fc00000;
 
 #ifdef __ORBIS__
 #include <limits>
-#define YGUndefined std::numeric_limits<float>::infinity()
-#else
-#define YGUndefined NAN
+#define YGUndefined std::numeric_limits<float>::quiet_NaN()
 #endif
 
 typedef struct YGValue {
