@@ -1,6 +1,6 @@
 @PACKAGE_INIT@
 
-find_package(folly CONFIG REQUIRED)
+find_package(folly QUIET CONFIG REQUIRED)
 find_package(double-conversion CONFIG REQUIRED)
 find_package(glog CONFIG REQUIRED)
 
