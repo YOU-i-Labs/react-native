@@ -8,6 +8,16 @@
 #include "YGFloatOptional.h"
 #include "Yoga-internal.h"
 
+#if defined(_MSC_VER)
+#define ENUM_BITFIELDS_NOT_SUPPORTED
+#endif
+
+#if !defined(ENUM_BITFIELDS_NOT_SUPPORTED)
+#define BITFIELD_ENUM_SIZED(num) : num
+#else
+#define BITFIELD_ENUM_SIZED(num)
+#endif
+
 constexpr std::array<float, 2> kYGDefaultDimensionValues = {
     {YGUndefined, YGUndefined}};
 
@@ -17,10 +27,10 @@ struct YGLayout {
   std::array<float, 4> margin = {};
   std::array<float, 4> border = {};
   std::array<float, 4> padding = {};
-  YGDirection direction : 2;
-  bool didUseLegacyFlag : 1;
-  bool doesLegacyStretchFlagAffectsLayout : 1;
-  bool hadOverflow : 1;
+  YGDirection direction BITFIELD_ENUM_SIZED(2);
+  bool didUseLegacyFlag BITFIELD_ENUM_SIZED(1);
+  bool doesLegacyStretchFlagAffectsLayout BITFIELD_ENUM_SIZED(1);
+  bool hadOverflow BITFIELD_ENUM_SIZED(1);
 
   uint32_t computedFlexBasisGeneration = 0;
   YGFloatOptional computedFlexBasis = {};
