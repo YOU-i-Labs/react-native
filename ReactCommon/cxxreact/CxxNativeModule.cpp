@@ -139,7 +139,7 @@ void CxxNativeModule::invoke(unsigned int reactMethodId, folly::dynamic&& params
   // stack.  I'm told that will be possible in the future.  TODO
   // mhorowitz #7128529: convert C++ exceptions to Java
 
-  messageQueueThread_->runOnQueue([method, params=std::move(params), first, second, callId] () {
+  messageQueueThread_->runOnQueue([method, params=std::move(params), first, second, callId] () mutable {
   #ifdef WITH_FBSYSTRACE
     if (callId != -1) {
       fbsystrace_end_async_flow(TRACE_TAG_REACT_APPS, "native", callId);
