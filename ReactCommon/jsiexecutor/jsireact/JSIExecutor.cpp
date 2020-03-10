@@ -185,7 +185,12 @@ void JSIExecutor::callFunction(
   auto errorProducer = [=] {
     std::stringstream ss;
     ss << "moduleID: " << moduleId << " methodID: " << methodId
-       << " arguments: " << folly::toJson(arguments);
+       << " arguments: " <<
+#ifndef NDEBUG
+       folly::toJson(arguments);
+#else
+       "(not available in release builds)";
+#endif
     return ss.str();
   };
 
