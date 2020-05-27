@@ -1,11 +1,11 @@
 @PACKAGE_INIT@
 
-find_package(folly QUIET CONFIG REQUIRED)
-find_package(double-conversion CONFIG REQUIRED)
-find_package(glog CONFIG REQUIRED)
+find_package(folly QUIET CONFIG REQUIRED NO_CMAKE_FIND_ROOT_PATH)
+find_package(double-conversion CONFIG REQUIRED NO_CMAKE_FIND_ROOT_PATH)
+find_package(glog CONFIG REQUIRED NO_CMAKE_FIND_ROOT_PATH)
 
 if (USE_JSC AND NOT APPLE)
-	find_package(WebKit CONFIG REQUIRED)
+	find_package(WebKit CONFIG REQUIRED NO_CMAKE_FIND_ROOT_PATH)
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/@_ReactCommon_CMake_EXPORT_NAME@Targets.cmake")
