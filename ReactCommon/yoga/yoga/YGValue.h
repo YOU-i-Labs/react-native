@@ -26,11 +26,11 @@ static const uint32_t __nan = 0x7fc00000;
 #define NAN (*(const float*) __nan)
 #endif
 
-#ifdef __ORBIS__
+#if defined(__ORBIS__) || defined(__PROSPERO__)
 #include <limits>
 #define YGUndefined std::numeric_limits<float>::quiet_NaN()
-#else	
-#define YGUndefined NAN	
+#else
+#define YGUndefined NAN
 #endif
 #endif
 

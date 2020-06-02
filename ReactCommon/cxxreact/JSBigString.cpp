@@ -30,7 +30,7 @@ namespace react {
 JSBigFileString::JSBigFileString(int fd, size_t size, off_t offset /*= 0*/)
     : m_fd{-1}, m_data{nullptr} {
 
-#if defined(__ORBIS__)
+#if defined(__ORBIS__) || defined(__PROSPERO__)
   // JSBigString not supported on these platforms
 #else
   folly::checkUnixError(m_fd = dup(fd), "Could not duplicate file descriptor");
