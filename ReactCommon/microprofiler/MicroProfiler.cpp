@@ -19,7 +19,7 @@
 
 // iOS doesn't support 'thread_local'. If we reimplement this to use
 // pthread_setspecific we can get rid of this
-#if defined(__APPLE__) || defined(UWP)
+#if defined(__APPLE__) || defined(UWP) || defined(YI_RC_WINDOWS)
 #define MICRO_PROFILER_STUB_IMPLEMENTATION 1
 #elif !defined(MICRO_PROFILER_STUB_IMPLEMENTATION)
 #define MICRO_PROFILER_STUB_IMPLEMENTATION 0

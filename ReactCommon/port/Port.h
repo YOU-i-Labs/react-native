@@ -6,6 +6,11 @@
 #if defined(_MSC_VER)
 #include <winapifamily.h>
 #if !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+#define UWP
+#define YI_RC_UWP
+#include "Port_UWP.h"
+#else 
+#define YI_RC_WINDOWS
 #include "Port_UWP.h"
 #endif
 #endif
