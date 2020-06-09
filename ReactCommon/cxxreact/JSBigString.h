@@ -9,7 +9,7 @@
 #if !defined(__native_client__)
 #include <fcntl.h>
 #endif
-#ifndef UWP
+#if !defined(UWP) && !defined(YI_RC_WINDOWS)
 #include <unistd.h>
 #include <sys/mman.h>
 #endif
