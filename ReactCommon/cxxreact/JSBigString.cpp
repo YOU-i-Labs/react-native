@@ -24,6 +24,10 @@
 #define open _open
 #endif
 
+#if defined(__PROSPERO__) && defined(WITH_FBREMAP)
+#undef WITH_FBREMAP
+#endif
+
 namespace facebook {
 namespace react {
 
@@ -56,7 +60,9 @@ JSBigFileString::JSBigFileString(int fd, size_t size, off_t offset /*= 0*/)
 
 JSBigFileString::~JSBigFileString() {
   if (m_data) {
+#if !defined(__PROSPERO__)
     munmap((void *)m_data, m_size);
+#endif
   }
   ::YI_CLOSE_FILE_FUNCTION(m_fd);
 }
@@ -125,8 +131,10 @@ const char *JSBigFileString::c_str() const {
     return "";
   }
   if (!m_data) {
+#if !defined(__PROSPERO__)
     m_data =
         (const char *)mmap(0, m_size, PROT_READ, MAP_PRIVATE, m_fd, m_mapOff);
+#endif
     CHECK(m_data != MAP_FAILED)
         << " fd: " << m_fd << " size: " << m_size << " offset: " << m_mapOff
         << " error: " << std::strerror(errno);
