@@ -7,7 +7,7 @@
 
 #include "NativeToJsBridge.h"
 
-#include <ReactCommon/CallInvoker.h>
+#include "../callinvoker/ReactCommon/CallInvoker.h"
 #include <folly/MoveWrapper.h>
 #include <folly/json.h>
 #include <glog/logging.h>

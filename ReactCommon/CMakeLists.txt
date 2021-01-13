@@ -42,6 +42,7 @@ set(REACT_COMMON_JS_INSPECTOR_SOURCE
 )
 
 set(REACT_COMMON_JSC_CXXREACT_SOURCE
+    callinvoker/ReactCommon/CallInvoker.h
     jsi/JSCRuntime.cpp
     jsi/JSCRuntime.h
     jsi/jsi/decorator.h
