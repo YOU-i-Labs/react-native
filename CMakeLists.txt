@@ -6,7 +6,7 @@ HunterGate(
     SHA1 "72645851d85509ecd5602231e5d4655b1c56d03d"
 )
 
-project(react-native VERSION "0.60.6")
+project(react-native VERSION "0.63.4")
 
 option(USE_JSC "" ON)
 
