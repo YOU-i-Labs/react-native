@@ -108,7 +108,7 @@ target_sources(ReactCommon
 
 target_compile_definitions(ReactCommon
     PUBLIC
-        REACTCOMMON_VERSION=60
+        REACTCOMMON_VERSION=63
 )
 
 target_include_directories(ReactCommon PRIVATE jsi)
