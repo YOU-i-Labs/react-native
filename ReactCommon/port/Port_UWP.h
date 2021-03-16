@@ -8,7 +8,7 @@
 #include <io.h>
 
 #define __attribute__(x)
-#define dup _dup
+#define dup ::_dup
 
 #undef YI_CLOSE_FILE_FUNCTION
 #define YI_CLOSE_FILE_FUNCTION _close

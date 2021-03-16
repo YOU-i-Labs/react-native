@@ -58,7 +58,7 @@ JSBigFileString::~JSBigFileString() {
   if (m_data) {
     munmap((void *)m_data, m_size);
   }
-  close(m_fd);
+  ::YI_CLOSE_FILE_FUNCTION(m_fd);
 }
 
 #ifdef WITH_FBREMAP
