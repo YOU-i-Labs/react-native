@@ -19,4 +19,10 @@ public final class RuntimeConfig {
   @Nullable public HermesMemoryDumper heapDumper;
   public long tripWireCooldownMS;
   public long tripWireLimitBytes;
+
+  RuntimeConfig() {}
+  
+  RuntimeConfig(long heapSizeMB) {
+    this.heapSizeMB = heapSizeMB;
+  }
 }
